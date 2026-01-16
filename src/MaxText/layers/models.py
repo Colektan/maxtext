@@ -154,6 +154,8 @@ class TransformerLinenPure(nn.Module):
 
       if self.config.decoder_block == DecoderBlockType.GEMMA3:
         bidirectional_mask = decoder_input_tokens == multimodal_utils.GEMMA_TOKEN_PLACEHOLDER
+      elif self.config.decoder_block == DecoderBlockType.QWEN3:
+        bidirectional_mask = decoder_input_tokens == multimodal_utils.GEMMA_TOKEN_PLACEHOLDER
       elif self.config.decoder_block == DecoderBlockType.LLAMA4:
         bidirectional_mask = decoder_input_tokens == multimodal_utils.LLAMA4_PATCH_TOKEN
       elif self.config.decoder_block == DecoderBlockType.QWEN3_MOE:

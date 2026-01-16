@@ -569,6 +569,14 @@ def get_dummy_image_shape_for_init(
         QWEN3_OMNI_IMAGE_SIZE,  # image_size_for_vit (height)
         QWEN3_OMNI_IMAGE_SIZE,  # video_num_frames
     )
+  elif model_name.startswith("qwen3-0.6b-vl"):
+    image_shape = (
+        batch_size,
+        num_image_per_sequence,
+        GEMMA_DEFAULT_IMAGE_SIZE,
+        GEMMA_DEFAULT_IMAGE_SIZE,
+        NUM_IMAGE_CHANNELS,
+    )
   return image_shape
 
 

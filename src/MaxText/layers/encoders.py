@@ -58,6 +58,22 @@ class VisionEncoder(nnx.Module):
       setattr(self, encoder_name, qwen3.Qwen3OmniMoeVisionEncoder(config=self.config, mesh=self.mesh, rngs=self.rngs))
       setattr(self, projector_name, qwen3.Qwen3OmniMoeVisionProjector(config=self.config, rngs=self.rngs))
       return encoder_name, projector_name
+    elif self.config.model_name in ["qwen3-0.6b", "qwen3-0.6b-vl"]: 
+      # 1. 复用 Gemma3 的模块 (因为 Gemma3 也是 SigLIP + MLP)
+      from MaxText.layers import gemma3  # 偷懒的关键！
+
+      encoder_name = "SigLIPVisionEncoder_0"
+      projector_name = "MLPVisionProjector_0"
+      
+      # 2. 实例化 Encoder (SigLIP)
+      # 只要你的 config 里的 vision_embed_dim 等参数设置对，它就能跑
+      setattr(self, encoder_name, gemma3.Gemma3VisionEncoderLayer(config=self.config, mesh=self.mesh, rngs=self.rngs))
+      
+      # 3. 实例化 Projector (MLP)
+      # 如果你想要简单的 MLP 投射，Gemma3 的 VisionEmbedder 刚好够用
+      setattr(self, projector_name, gemma3.VisionEmbedder(config=self.config, mesh=self.mesh, rngs=self.rngs))
+      
+      return encoder_name, projector_name
     else:
       raise ValueError(f"No VisionEncoder implemented for {self.config.model_name} yet")
 

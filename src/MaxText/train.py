@@ -17,6 +17,11 @@
 
 # Calling jax.device_count here prevents a "TPU platform already registered" error.
 # See github.com/google/maxtext/issues/20 for more
+import os
+os.environ["JAX_COORDINATOR_ADDRESS"] = "127.0.0.1:12345"
+os.environ["JAX_NUM_PROCESSES"] = "1"
+os.environ["JAX_PROCESS_ID"] = "0"
+
 
 from typing import Any, Sequence
 import datetime
@@ -449,6 +454,7 @@ def train_loop(config, recorder, state=None):
         # pylint: disable=not-callable
         nextrng = jax.jit(jax.random.fold_in)(init_rng, step)
         with maybe_record_goodput(recorder, GoodputEvent.STEP, step):
+
           with jax.set_mesh(mesh), nn_partitioning.axis_rules(config.logical_axis_rules):
             if config.shard_optimizer_over_data:
               state = sharding.maybe_shard_with_name(state, state_mesh_shardings, config.shard_mode)
@@ -565,6 +571,13 @@ def run(config, recorder, diagnostic_config):
 
 
 def main(argv: Sequence[str]) -> None:
+  import debugpy
+  print("\n👉 [Debug] 正在等待 VS Code 连接 (Port 5678)...")
+
+  # debugpy.listen(("0.0.0.0", 5678))
+  
+  # debugpy.wait_for_client()
+
   config, recorder, diagnostic_config = initialize(argv)
   run(config, recorder, diagnostic_config)
 

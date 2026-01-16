@@ -202,6 +202,7 @@ type ModelName = Literal[
     "gemma3-12b",
     "gemma3-27b",
     "qwen3-0.6b",
+    "qwen3-0.6b-vl",
     "qwen3-4b",
     "qwen3-4b-thinking-2507",
     "qwen3-8b",
@@ -2072,6 +2073,7 @@ class MaxTextConfig(
         raise ValueError("Loss-free load balancing is only supported for the DeepSeek decoder block.")
     if self.use_multimodal:
       valid_mm_models = (
+          "qwen3-0.6b-vl",
           "gemma3-4b",
           "gemma3-12b",
           "gemma3-27b",
